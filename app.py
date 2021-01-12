@@ -44,14 +44,24 @@ def getParsedEvents(locationNumber, categoryNumber, beginDate, endDate):
         endtime = time.mktime(endDateTime.timetuple())
         endtime_str = str(int(endtime))
     else:
+        # This works locally
+        # # beginDate
+        # begintm = time.strptime(beginDate, '%Y-%m-%d')
+        # begintime = time.mktime(begintm)
+        # begintime_str = str(int(begintime))
+        # # endDate
+        # endtm = time.strptime(endDate, '%Y-%m-%d')
+        # endtime = time.mktime(endtm)
+        # endtime_str = str(int(endtime))
+        # This works in the cloud
         # beginDate
-        begintm = time.strptime(beginDate, '%Y-%m-%d')
-        begintime = time.mktime(begintm)
-        begintime_str = str(int(begintime))
+        beginDateTime = datetime.strptime(beginDate, '%Y-%m-%d')
+        beginTimeFloat = time.mktime((beginDateTime + timedelta(days=1)).timetuple())
+        begintime_str = str(int(beginTimeFloat))
         # endDate
-        endtm = time.strptime(endDate, '%Y-%m-%d')
-        endtime = time.mktime(endtm)
-        endtime_str = str(int(endtime))
+        endDateTime = datetime.strptime(endDate, '%Y-%m-%d')
+        endTimeFloat = time.mktime((endDateTime + timedelta(days=1)).timetuple())
+        endtime_str = str(int(endTimeFloat))
 
     # resp = requests.get('https://groupexpro.com/schedule/embed/json.php?schedule&instructor_id=true&format=jsonp&a=110&location='+ locationNumber +'&category=' + categoryNumber +'&start=' + begintime_str + '&end=' + endtime_str + '&callback=jQuery35108719133265827776_1610171732530&_=1610171732536')
     resp = requests.get('https://groupexpro.com/schedule/embed/json.php?schedule&instructor_id=true&format=jsonp&a=110&location='+ locationNumber +'&category=' + categoryNumber +'&start=' + begintime_str + '&end=' + endtime_str + '&callback=&_=')
