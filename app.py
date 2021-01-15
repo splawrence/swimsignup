@@ -196,9 +196,8 @@ def reservations():
     password  = request.form['password']
     urlList = request.form['urlList'].split(',')
     returnMessageList = []
-    
+    driver = webdriver.Chrome("/usr/lib/chromium-browser/chromedriver")
     for url in urlList:
-        driver = webdriver.Firefox()
         driver.get(url)
         try:
             emailEl = driver.find_element_by_id('login')
@@ -220,7 +219,7 @@ def reservations():
                 messageText = message.get_attribute('innerText')
                 returnMessageList.append(messageText)
             return render_template('error.html', data=returnMessageList)
-        driver.close()
+    driver.close()
 
 if __name__ == '__main__':
     app.run(debug=True)
