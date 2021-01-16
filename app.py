@@ -7,6 +7,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import NoSuchElementException 
+from selenium.webdriver.chrome.options import Options
 
 def configureEvents(eventList):
     print ("configureEvents")
@@ -196,7 +197,9 @@ def reservations():
     password  = request.form['password']
     urlList = request.form['urlList'].split(',')
     returnMessageList = []
-    driver = webdriver.Chrome("/usr/lib/chromium-browser/chromedriver")
+    options = Options()
+    options.headless = True
+    driver = webdriver.Chrome(chrome_options=options)
     for url in urlList:
         driver.get(url)
         try:
