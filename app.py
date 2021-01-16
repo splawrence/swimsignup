@@ -1,7 +1,13 @@
+from logging import exception
 import requests
 from flask import Flask, render_template, request
 import time
 from datetime import datetime, timedelta 
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.common.exceptions import NoSuchElementException 
+from selenium.webdriver.chrome.options import Options
 
 def configureEvents(eventList):
     print ("configureEvents")
@@ -184,6 +190,39 @@ def main():
 @app.route('/')
 def home():
     return render_template('home.html')
+
+@app.route('/register', methods=['POST'])
+def reservations():
+    email  = request.form['email']
+    password  = request.form['password']
+    urlList = request.form['urlList'].split(',')
+    returnMessageList = []
+    options = Options()
+    options.headless = True
+    driver = webdriver.Chrome(chrome_options=options)
+    for url in urlList:
+        driver.get(url)
+        try:
+            emailEl = driver.find_element_by_id('login')
+            emailEl.send_keys(email)
+            passwordEl = driver.find_element_by_id("password")
+            passwordEl.send_keys(password)
+            submitEl = driver.find_element_by_name('submit')
+            submitEl.click()
+            submitEl = driver.find_element_by_name('submit')
+            submitEl.click() 
+            messageList = driver.find_elements_by_class_name('alert')
+            for message in messageList:
+                messageText = message.get_attribute('innerText')
+                returnMessageList.append(messageText)
+            return render_template('success.html', data=returnMessageList)
+        except:
+            messageList = driver.find_elements_by_class_name('alert')
+            for message in messageList:
+                messageText = message.get_attribute('innerText')
+                returnMessageList.append(messageText)
+            return render_template('error.html', data=returnMessageList)
+    driver.close()
 
 if __name__ == '__main__':
     app.run(debug=True)
