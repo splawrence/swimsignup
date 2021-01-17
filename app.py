@@ -197,9 +197,11 @@ def reservations():
     password  = request.form['password']
     urlList = request.form['urlList'].split(',')
     returnMessageList = []
-    options = Options()
-    options.headless = True
-    driver = webdriver.Chrome(chrome_options=options)
+    chrome_options = Options()
+    chrome_options.add_argument('--headless')
+    chrome_options.add_argument('--no-sandbox')
+    chrome_options.add_argument('--disable-dev-shm-usage')
+    driver = webdriver.Chrome('/usr/lib/chromium-browser/chromedriver', chrome_options=chrome_options)
     for url in urlList:
         driver.get(url)
         try:
