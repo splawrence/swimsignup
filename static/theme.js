@@ -3,16 +3,15 @@ $(document).ready(function() {
         select: true
     } );
 
-    var selectedUrlList = []
+    var selectedEventList = []
     $('#btnRegister').click(function () {
         let rows = table.rows('.selected');
         if(rows.data().length > 0 ) {
             rows.every(function(rowIdx, tableLoop, rowLoop){
-                var url = table.cell(this, 0).data();
-         
-                selectedUrlList.push(url)
+                var event = this.data();
+                selectedEventList.push("[" + event + "]");
             });
-            $('#urlList').val(selectedUrlList)
+            $('#eventList').val(selectedEventList);
         }
     })
 } );
