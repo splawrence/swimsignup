@@ -1,4 +1,4 @@
-from domain.Event import Event
+from domain.event import Event
 from service.appservice import *
 from service.appserviceREST import *
 from flask import Flask, render_template, request
