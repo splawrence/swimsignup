@@ -1,4 +1,4 @@
-from domain.Event import Event
+from domain.event import Event
 from service.appservice import *
 
 def formatColumnStringToColumnList(eventStringList):
