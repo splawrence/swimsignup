@@ -5,16 +5,6 @@ from flask import Flask, render_template, request
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
-# start webdriver and keep it running globally
-chrome_options = Options()
-chrome_options.add_argument("--headless")
-# chrome_options.add_argument("--no-sandbox")
-# chrome_options.add_argument("--disable-dev-shm-usage")
-# run on armv7i
-driver = webdriver.Chrome('/usr/lib/chromium-browser/chromedriver', chrome_options=chrome_options)
-# run on windows
-# driver = webdriver.Chrome(options=chrome_options)
-
 app = Flask(__name__)
 
 @app.route('/spawnlings')
@@ -65,36 +55,73 @@ def reservations():
     selectedEventStrList = eventStrList.split("],[")
     selectedEventList = []
 
+    # start webdriver and keep it running globally
+    chrome_options = Options()
+    # chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    # run on armv7i
+    # driver = webdriver.Chrome('/usr/lib/chromium-browser/chromedriver', chrome_options=chrome_options)
+    # run on windows
+    driver = webdriver.Chrome(options=chrome_options)
+    isLoggedIn = False
     for eventStr in selectedEventStrList:
+        messageList = []
         newEvent = Event()
         newEvent.createFromString(eventStr)
         responseMessageList = []
         driver.get(newEvent.signUpURL)
-        try:
-            # login page
-            emailEl = driver.find_element_by_id("login")
-            emailEl.send_keys(email)
-            passwordEl = driver.find_element_by_id("password")
-            passwordEl.send_keys(password)
-            submitEl = driver.find_element_by_name("submit")
-            submitEl.click()
-            # reserve slot page
-            submitEl = driver.find_element_by_name("submit")
-            submitEl.click()
-            messageList = driver.find_elements_by_class_name("alert")
-            for message in messageList:
-                messageText = message.get_attribute("innerText")
-                responseMessageList.append(messageText)
-            newEvent.message = responseMessageList
-            newEvent.status = "success"
-        except:
-            messageList = driver.find_elements_by_class_name("alert")
-            for message in messageList:
-                messageText = message.get_attribute("innerText")
-                responseMessageList.append(messageText)
+
+        if isLoggedIn is False:
+            try:
+                # login page
+                emailEl = driver.find_element_by_id("login")
+                emailEl.send_keys(email)
+                passwordEl = driver.find_element_by_id("password")
+                passwordEl.send_keys(password)
+                submitEl = driver.find_element_by_name("submit")
+                submitEl.click()
+                # reserve slot page
+                submitEl = driver.find_element_by_name("submit")
+                submitEl.click()
+                messageList = driver.find_elements_by_class_name("alert")
+                for message in messageList:
+                    messageText = message.get_attribute("innerText")
+                    responseMessageList.append(messageText)
+                """<a class="cancelReservation" href="/gxp/reservations/start/index/11612896/01/22/2021?method=cancelReservation&amp;e=0&amp;type=">Cancel Reservation</a>"""
                 newEvent.message = responseMessageList
-                newEvent.status = "error"
-        selectedEventList.append(newEvent)
+                newEvent.status = "success"
+            except:
+                messageList = driver.find_elements_by_class_name("alert")
+                for message in messageList:
+                    messageText = message.get_attribute("innerText")
+                    responseMessageList.append(messageText)
+                    newEvent.message = responseMessageList
+                    newEvent.status = "error"
+            selectedEventList.append(newEvent)
+            isLoggedIn = True
+        else:
+            try:
+                # reserve slot page
+                submitEl = driver.find_element_by_name("submit")
+                submitEl.click()
+                messageList = driver.find_elements_by_class_name("alert")
+                for message in messageList:
+                    messageText = message.get_attribute("innerText")
+                    responseMessageList.append(messageText)
+                """<a class="cancelReservation" href="/gxp/reservations/start/index/11612896/01/22/2021?method=cancelReservation&amp;e=0&amp;type=">Cancel Reservation</a>"""
+                newEvent.message = responseMessageList
+                newEvent.status = "success"
+            except:
+                messageList = driver.find_elements_by_class_name("alert")
+                for message in messageList:
+                    messageText = message.get_attribute("innerText")
+                    responseMessageList.append(messageText)
+                    newEvent.message = responseMessageList
+                    newEvent.status = "error"
+            selectedEventList.append(newEvent)
+
+    driver.close()
     return render_template("confirmation.html", data=selectedEventList)
 
 if __name__ == '__main__':
