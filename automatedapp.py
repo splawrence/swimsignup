@@ -17,8 +17,16 @@ def do_stuff():
     first_timeslot = Event()
     second_timeslot = Event()
 
-    first_timeslot.create_from_time("5:00pm-5:30pm")
-    second_timeslot.create_from_time("5:30pm-6:00pm")
+    # check if it is a weekend
+    week_no = datetime.datetime.today().weekday()
+    if week_no < 5:
+        first_timeslot.create_from_time("5:00pm-5:30pm")
+        second_timeslot.create_from_time("5:30pm-6:00pm")
+    else:  # 5 Sat, 6 Sun
+        first_timeslot.create_from_time("11:00am-11:30am")
+        second_timeslot.create_from_time("11:30am-12:00pm")
+
+
     person_list = []
     # add user login information here
     user = {"email": "", "password": ""}
