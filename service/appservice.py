@@ -1,79 +1,102 @@
 from domain.event import Event
 from service.appservice import *
 
-def formatColumnStringToColumnList(eventStringList):
-    eventList = []
+
+def format_column_string_to_column_list(event_string_list):
+    event_list = []
     # setup event string list
-    for rowString in eventStringList:
+    for row_string in event_string_list:
         x = 0
         # split string row to columns
-        columnList = list(rowString.split(',')) 
+        column_list = list(row_string.split(","))
         # clean up the header list
-        for column in columnList:
-            columnList[x] = column.strip()
+        for column in column_list:
+            column_list[x] = column.strip()
             x = x + 1
-        eventList.append(columnList)
-    return eventList
+        event_list.append(column_list)
+    return event_list
 
-def formatResponseBody(responseBody):
+
+def format_response_body(response_body):
     # format payload
     # find the right of this position
-    nonJSONPayLoad = responseBody.find('aaData')+8
+    non_json_pay_load = response_body.find("aaData") + 8
     # remove these things
-    JSONPayLoad = responseBody[nonJSONPayLoad:]
-    JSONPayLoad = JSONPayLoad.rstrip("})")
-    JSONPayLoad = JSONPayLoad.replace("\n","")
-    JSONPayLoad = JSONPayLoad.replace("\t","")
-    JSONPayLoad = JSONPayLoad.replace("\t","")
+    json_pay_load = response_body[non_json_pay_load:]
+    json_pay_load = json_pay_load.rstrip("})")
+    json_pay_load = json_pay_load.replace("\n", "")
+    json_pay_load = json_pay_load.replace("\t", "")
+    json_pay_load = json_pay_load.replace("\t", "")
     # add pipes for delimiting later
-    JSONPayLoad = JSONPayLoad.replace("],[","|")
+    json_pay_load = json_pay_load.replace("],[", "|")
     # remove these things
-    JSONPayLoad = JSONPayLoad.replace("[","")
-    JSONPayLoad = JSONPayLoad.replace("]","")
-    JSONPayLoad = JSONPayLoad.replace("&nbsp;","")
-    JSONPayLoad = JSONPayLoad.replace("&nbsp;","")
-    JSONPayLoad = JSONPayLoad.replace("<br><strong>Staff</strong><br />","")
-    JSONPayLoad = JSONPayLoad.replace('"', '')
+    json_pay_load = json_pay_load.replace("[", "")
+    json_pay_load = json_pay_load.replace("]", "")
+    json_pay_load = json_pay_load.replace("&nbsp;", "")
+    json_pay_load = json_pay_load.replace("&nbsp;", "")
+    json_pay_load = json_pay_load.replace("<br><strong>Staff</strong><br />", "")
+    json_pay_load = json_pay_load.replace('"', "")
 
     # create a list using pipes as delimiter
-    return list(JSONPayLoad.split("|"))
+    return list(json_pay_load.split("|"))
 
-def convertEventStrListToEventList(eventStrList):
-    print ("app called convertEventStrListToEventList")
-    eventList = []
-    for eventStr in eventStrList:
-        newEvent = Event()
-        newEvent = newEvent.createFromGroupExParams(eventStr)
-        eventList.append(newEvent)
-    return eventList
+
+def convert_event_str_list_to_event_list(event_str_list):
+    print("app called convert_event_str_list_to_event_list")
+    event_list = []
+    for event_str in event_str_list:
+        new_event = Event()
+        new_event = new_event.create_from_group_ex_params(event_str)
+        event_list.append(new_event)
+    return event_list
 
 
 # find events based on search criteria
-def findEventByTitleCategoryStudioOpenSlots(availibleEventList, inputEvent):
-    print("getEventByDayTitleCategoryStudiosOpenSlots")
-    desiredEventList = []
-    for event in availibleEventList:
-        if (event.title == inputEvent.title 
-        and event.category == inputEvent.category 
-        and event.studio == inputEvent.studio
-        and event.openSlots >= inputEvent.openSlots):
-                try:
-                    desiredEventList.append(event)
-                except:
-                    print("Error")
-    return desiredEventList
+def find_event_without_time(availible_event_list, input_event):
+    print("find_event_without_time")
+    desired_event_list = []
+    for event in availible_event_list:
+        if (
+            event.title == input_event.title
+            and event.category == input_event.category
+            and event.studio == input_event.studio
+            and event.openSlots >= input_event.openSlots
+        ):
+            try:
+                desired_event_list.append(event)
+            except:
+                print("Error")
+    return desired_event_list
+
+
 # find events based on search criteria
-def findEventByTimeTitleCategoryOpenSlots(availibleEventList, inputEvent):
-    print("getEventByDayTimeTitleCategoryStudioOpenSlots")
-    desiredEventList = []
-    for event in availibleEventList:
-        if (event.time == inputEvent.time 
-        and event.title == inputEvent.title 
-        and event.category == inputEvent.category 
-        and event.studio == inputEvent.studio
-        and event.openSlots >= inputEvent.openSlots):
-                try:
-                    desiredEventList.append(event)
-                except:
-                    print("Error")
-    return desiredEventList
+def find_event_with_time(availible_event_list, input_event):
+    print("find_event_with_time")
+    desired_event_list = []
+    for event in availible_event_list:
+        if (
+            event.time == input_event.time
+            and event.title == input_event.title
+            and event.category == input_event.category
+            and event.studio == input_event.studio
+            and event.openSlots >= input_event.openSlots
+        ):
+            try:
+                desired_event_list.append(event)
+            except:
+                print("Error")
+    return desired_event_list
+
+
+# find one event based on search criteria
+def find_one_event_from_inputs(availible_event_list, input_event):
+    print("find_one_event_from_inputs")
+    for event in availible_event_list:
+        if (
+            event.time == input_event.time
+            and event.title == input_event.title
+            and event.category == input_event.category
+            and event.studio == input_event.studio
+            and event.openSlots >= input_event.openSlots
+        ):
+            return event
