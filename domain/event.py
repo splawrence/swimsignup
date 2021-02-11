@@ -1,3 +1,6 @@
+from datetime import datetime as dt, timedelta
+
+
 class Event:
     def __init__(self):
         self.day = ""
@@ -31,7 +34,8 @@ class Event:
 
     def create_from_group_ex_params(self, event_str):
         self.day = event_str[0]
-        self.date = event_str[1]
+        self.month = event_str[1].split(" ")[0]
+        self.date = event_str[1].split(" ")[1]
         self.year = event_str[2]
         self.time = event_str[3]
         self.title = event_str[4]
@@ -47,7 +51,7 @@ class Event:
             + event_str[10]
         )
         self.location = event_str[13]
-        # extract openSlots and Signup URL
+        # extract open_slots and Signup URL
         meta_list = list(event_str[14].split("\\"))
         if len(meta_list) > 12:
             self.open_slots = meta_list[12].split(" ")[0]
@@ -91,5 +95,6 @@ class Event:
         self.open_slots = "1"
         self.title = "Lap/Fitness Lane Reservation"
         self.time = time
+        self.date = str(dt.now().day + 2)
 
         return self

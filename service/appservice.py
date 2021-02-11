@@ -42,7 +42,6 @@ def format_response_body(response_body):
 
 
 def convert_event_str_list_to_event_list(event_str_list):
-    print("app called convert_event_str_list_to_event_list")
     event_list = []
     for event_str in event_str_list:
         new_event = Event()
@@ -53,14 +52,13 @@ def convert_event_str_list_to_event_list(event_str_list):
 
 # find events based on search criteria
 def find_event_without_time(availible_event_list, input_event):
-    print("find_event_without_time")
     desired_event_list = []
     for event in availible_event_list:
         if (
             event.title == input_event.title
             and event.category == input_event.category
             and event.studio == input_event.studio
-            and event.openSlots >= input_event.openSlots
+            and event.open_slots >= input_event.open_slots
         ):
             try:
                 desired_event_list.append(event)
@@ -71,7 +69,6 @@ def find_event_without_time(availible_event_list, input_event):
 
 # find events based on search criteria
 def find_event_with_time(availible_event_list, input_event):
-    print("find_event_with_time")
     desired_event_list = []
     for event in availible_event_list:
         if (
@@ -79,7 +76,7 @@ def find_event_with_time(availible_event_list, input_event):
             and event.title == input_event.title
             and event.category == input_event.category
             and event.studio == input_event.studio
-            and event.openSlots >= input_event.openSlots
+            and event.open_slots >= input_event.open_slots
         ):
             try:
                 desired_event_list.append(event)
@@ -90,13 +87,13 @@ def find_event_with_time(availible_event_list, input_event):
 
 # find one event based on search criteria
 def find_one_event_from_inputs(availible_event_list, input_event):
-    print("find_one_event_from_inputs")
     for event in availible_event_list:
         if (
             event.time == input_event.time
             and event.title == input_event.title
             and event.category == input_event.category
             and event.studio == input_event.studio
-            and event.openSlots >= input_event.openSlots
+            and event.open_slots >= input_event.open_slots
+            and event.date == input_event.date
         ):
             return event
