@@ -4,7 +4,6 @@ import time
 from datetime import datetime, timedelta 
 
 def get_events_by_place_date(location_number, category_number, begin_date, end_date):
-    print ("app called get_events_by_place_date")
     event_string_list = []
     # if no input date then get 48 hours worth of data
     if begin_date == "" or end_date == "":
@@ -32,7 +31,7 @@ def get_events_by_place_date(location_number, category_number, begin_date, end_d
         print("Response code: " + str(resp.status_code))
         print("Unexpected error") 
     else:
-        print("Response code: " + str(resp.status_code))
+        print("Response received: " + str(resp.status_code))
         event_string_list = format_response_body(resp.text)
     
     event_list = format_column_string_to_column_list(event_string_list)
@@ -42,7 +41,6 @@ def get_events_by_place_date(location_number, category_number, begin_date, end_d
 
 
 def get_future_events():
-    print ("app called get_future_events")
     category_number = '8980'
     location_number = '701'
     event_string_list = []
@@ -61,7 +59,7 @@ def get_future_events():
         print("Response code: " + str(resp.status_code))
         print("Unexpected error") 
     else:
-        print("Response code: " + str(resp.status_code))
+        print("Response received: " + str(resp.status_code))
         event_string_list = format_response_body(resp.text)
     
     event_list = format_column_string_to_column_list(event_string_list)

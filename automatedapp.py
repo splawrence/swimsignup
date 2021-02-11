@@ -18,7 +18,7 @@ def do_stuff():
     second_timeslot = Event()
 
     # check if it is a weekend
-    week_no = datetime.datetime.today().weekday()
+    week_no = dt.today().weekday()
     if week_no < 5:
         first_timeslot.create_from_time("5:00pm-5:30pm")
         second_timeslot.create_from_time("5:30pm-6:00pm")
@@ -26,12 +26,9 @@ def do_stuff():
         first_timeslot.create_from_time("11:00am-11:30am")
         second_timeslot.create_from_time("11:30am-12:00pm")
 
-
     person_list = []
     # add user login information here
-    user = {"email": "", "password": ""}
 
-    person_list.append(user)
 
     input_events = []
     input_events.append(first_timeslot)
@@ -45,8 +42,11 @@ def do_stuff():
     for input_event in input_events:
         desired_event_list.append(find_one_event_from_inputs(event_list, input_event))
 
-    for person in person_list:
-        reservations(person["email"], person["password"], desired_event_list)
+    if desired_event_list[0] is not None and desired_event_list[1] is not None:
+        for person in person_list:
+            reservations(person["email"], person["password"], desired_event_list)
+    else:
+        print("slot could not be found")
 
 
 def login(driver, email, password):
@@ -59,19 +59,21 @@ def login(driver, email, password):
 
 def submit(driver):
     submit_element = driver.find_element_by_name("submit")
-    submit_element.click()
+
+
+# submit_element.click()
 
 
 def reservations(email, password, desired_event_list):
     # start webdriver and keep it running globally
     chrome_options = Options()
-    # chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--headless")
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
     # run on armv7i
-    # driver = webdriver.Chrome('/usr/lib/chromium-browser/chromedriver', chrome_options=chrome_options)
+    driver = webdriver.Chrome('/usr/lib/chromium-browser/chromedriver', chrome_options=chrome_options)
     # run on windows
-    driver = webdriver.Chrome(options=chrome_options)
+    # driver = webdriver.Chrome(options=chrome_options)
     is_logged_in = False
     for event in desired_event_list:
         driver.get(event.signUpURL)

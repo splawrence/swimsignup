@@ -17,7 +17,7 @@ def main():
     input_event.create_from_view_params(request.args.get('times', None),
                                     request.args.get('categories', None),
                                     request.args.get('studios', None),
-                                    request.args.get('openSlots', None),
+                                    request.args.get('open_slots', None),
                                     request.args.get('titles', None),
                                     request.args.get('beginDate', None),
                                     request.args.get('endDate', None))
@@ -38,7 +38,7 @@ def main():
     event_list = get_events_by_place_date(location_number, category_number, input_event.begin_date, input_event.end_date)
     availible_event_list = []
     for event in event_list:
-        if event.openSlots != "WAITLIST" and event.openSlots != "CLASS":
+        if event.open_slots != "WAITLIST" and event.open_slots != "CLASS":
                     try:
                         availible_event_list.append(event)
                     except:
