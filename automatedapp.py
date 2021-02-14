@@ -8,36 +8,45 @@ from selenium.common.exceptions import NoSuchElementException
 
 
 def main():
+    # scheduling logic
+    # run every other day
+    # if registration is for weekend, run at 12 for 11-12
+    # else run at 6 for 5-6
     if (dt.now().date() - dt(2021, 2, 9).date()).days % 2 == 0:
         print("Program starting " + str(dt.now()))
-        do_stuff()
-        print("Program complete " + str(dt.now()))
-    else:
-        print("Not running today.")
+        week_no = dt.today().weekday()
+        first_timeslot = Event()
+        second_timeslot = Event()
+        # check if registration is for a weekend
+        if week_no < 3 or week_no > 4:
+            # if run occurs at 6pm
+            if dt.now().hour == 18:
+                first_timeslot.create_from_time("5:00pm-5:30pm")
+                second_timeslot.create_from_time("5:30pm-6:00pm")
+                print("Using 5-6 timeframe.")
+                # set time list
+                input_events = [first_timeslot, second_timeslot]
+                do_stuff(input_events)
+                print("Program complete " + str(dt.now()))
+        else:
+            # if run occurs at 12pm
+            if dt.now().hour == 12:
+                first_timeslot.create_from_time("11:00am-11:30am")
+                second_timeslot.create_from_time("11:30am-12:00pm")
+                print("Using 11-12 timeframe.")
+                # set time list
+                input_events = [first_timeslot, second_timeslot]
+                do_stuff(input_events)
+                print("Program complete " + str(dt.now()))
 
 
-def do_stuff():
-    first_timeslot = Event()
-    second_timeslot = Event()
-
-    # check if it is a weekend
-    week_no = dt.today().weekday()
-    if week_no < 3 or week_no > 4:
-        first_timeslot.create_from_time("5:00pm-5:30pm")
-        second_timeslot.create_from_time("5:30pm-6:00pm")
-        print("Using 5-6 timeframe.")
-    else:  # 5 Sat, 6 Sun
-        first_timeslot.create_from_time("11:00am-11:30am")
-        second_timeslot.create_from_time("11:30am-12:00pm")
-        print("Using 11-12 timeframe.")
-
+def do_stuff(input_events):
     person_list = []
     # add user login information here
-
-
-    input_events = []
-    input_events.append(first_timeslot)
-    input_events.append(second_timeslot)
+    file = open("login.csv", "r")
+    for login in file:
+        person_list.append(login.split(","))
+    file.close()
 
     event_list = []
     event_list = get_future_events()
@@ -50,9 +59,9 @@ def do_stuff():
     if desired_event_list[0] is not None and desired_event_list[1] is not None:
         print("Slots found. Commencing registration.")
         for person in person_list:
-            reservations(person["email"], person["password"], desired_event_list)
+            reservations(person[0], person[1], desired_event_list)
     else:
-        print("Slot could not be found")
+        print("Slots could not be found")
 
 
 def login(driver, email, password):
@@ -73,12 +82,22 @@ def reservations(email, password, desired_event_list):
     chrome_options = Options()
     chrome_options.add_argument("--headless")
     # run on armv7i
-    driver = webdriver.Chrome('/usr/lib/chromium-browser/chromedriver', chrome_options=chrome_options)
+    driver = webdriver.Chrome(
+        "/usr/lib/chromium-browser/chromedriver", options=chrome_options
+    )
     # run on windows
     # driver = webdriver.Chrome(options=chrome_options)
     is_logged_in = False
     for event in desired_event_list:
-        time_stamp = str(email) + str(" for ") + str(event.month) + " " + str(event.date) + " " + str(event.time)
+        time_stamp = (
+            str(email)
+            + str(" for ")
+            + str(event.month)
+            + " "
+            + str(event.date)
+            + " "
+            + str(event.time)
+        )
         driver.get(event.sign_up_url)
         try:
             if is_logged_in is False:
