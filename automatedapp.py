@@ -20,25 +20,31 @@ def main():
         if week_no < 3 or week_no > 4:
             # if run occurs at 6pm
             if dt.now().hour == 18:
-                print("Program starting " + str(dt.now()))
+                print("Program starting: " + str(dt.now()))
                 first_timeslot.create_from_time("5:00pm-5:30pm")
                 second_timeslot.create_from_time("5:30pm-6:00pm")
                 print("Using 5-6 timeframe.")
                 # set time list
                 input_events = [first_timeslot, second_timeslot]
-                do_stuff(input_events)
-                print("Program complete " + str(dt.now()))
+                # do_stuff(input_events)
+                print("Program complete: " + str(dt.now()))
+            else:
+                print("Not running right now: " + str(dt.now()))
         else:
             # if run occurs at 12pm
             if dt.now().hour == 12:
-                print("Program starting " + str(dt.now()))
+                print("Program starting: " + str(dt.now()))
                 first_timeslot.create_from_time("11:00am-11:30am")
                 second_timeslot.create_from_time("11:30am-12:00pm")
                 print("Using 11-12 timeframe.")
                 # set time list
                 input_events = [first_timeslot, second_timeslot]
-                do_stuff(input_events)
-                print("Program complete " + str(dt.now()))
+                # do_stuff(input_events)
+                print("Program complete: " + str(dt.now()))
+            else:
+                print("Not running right now: " + str(dt.now()))
+    else:
+        print("Not running right now: " + str(dt.now()))
 
 
 def do_stuff(input_events):
