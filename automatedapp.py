@@ -18,8 +18,8 @@ def main():
         second_timeslot = Event()
         # check if registration is for a weekend
         if week_no < 3 or week_no > 4:
-            # if run occurs at 6pm
-            if dt.now().hour == 18:
+            # if run occurs at 5pm
+            if dt.now().hour == 17:
                 print("Program starting: " + str(dt.now()))
                 first_timeslot.create_from_time("5:00pm-5:30pm")
                 second_timeslot.create_from_time("5:30pm-6:00pm")
@@ -31,8 +31,8 @@ def main():
             else:
                 print("Not running right now: " + str(dt.now()))
         else:
-            # if run occurs at 12pm
-            if dt.now().hour == 12:
+            # if run occurs at 11pm
+            if dt.now().hour == 11:
                 print("Program starting: " + str(dt.now()))
                 first_timeslot.create_from_time("11:00am-11:30am")
                 second_timeslot.create_from_time("11:30am-12:00pm")
