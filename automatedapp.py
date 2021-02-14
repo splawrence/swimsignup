@@ -43,7 +43,7 @@ def main():
 def do_stuff(input_events):
     person_list = []
     # add user login information here
-    file = open("login.csv", "r")
+    file = open("/home/ubuntu/apps/login.csv", "r")
     for login in file:
         person_list.append(login.split(","))
     file.close()
