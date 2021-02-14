@@ -13,7 +13,6 @@ def main():
     # if registration is for weekend, run at 12 for 11-12
     # else run at 6 for 5-6
     if (dt.now().date() - dt(2021, 2, 9).date()).days % 2 == 0:
-        print("Program starting " + str(dt.now()))
         week_no = dt.today().weekday()
         first_timeslot = Event()
         second_timeslot = Event()
@@ -21,6 +20,7 @@ def main():
         if week_no < 3 or week_no > 4:
             # if run occurs at 6pm
             if dt.now().hour == 18:
+                print("Program starting " + str(dt.now()))
                 first_timeslot.create_from_time("5:00pm-5:30pm")
                 second_timeslot.create_from_time("5:30pm-6:00pm")
                 print("Using 5-6 timeframe.")
@@ -31,6 +31,7 @@ def main():
         else:
             # if run occurs at 12pm
             if dt.now().hour == 12:
+                print("Program starting " + str(dt.now()))
                 first_timeslot.create_from_time("11:00am-11:30am")
                 second_timeslot.create_from_time("11:30am-12:00pm")
                 print("Using 11-12 timeframe.")
@@ -47,7 +48,7 @@ def do_stuff(input_events):
     for login in file:
         person_list.append(login.split(","))
     file.close()
-
+   
     event_list = []
     event_list = get_future_events()
 
