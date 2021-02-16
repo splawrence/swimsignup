@@ -40,7 +40,7 @@ def main():
 def send_email(message):
     port = 465  # For SSL
     # Email credentials here
-    
+
     subject = "Error occured in Swimsignup"
     message = "Subject: {}\n\n{}".format(subject, message)
 
@@ -56,10 +56,10 @@ def do_stuff(input_events):
     person_list = []
     # add user login information here
     # for use on the server
-    # file = open("/home/ubuntu/apps/login.csv", "r")
+    file = open("/home/ubuntu/apps/login.csv", "r")
 
     # local development
-    file = open("login.csv", "r")
+    # file = open("login.csv", "r")
     for login in file:
         person_list.append(login.split(","))
     file.close()
@@ -96,7 +96,7 @@ def login(driver, email, password):
 
 def submit(driver):
     submit_element = driver.find_element_by_name("submit")
-    # submit_element.click()
+    submit_element.click()
 
 
 def reservations(email, password, desired_event_list):
