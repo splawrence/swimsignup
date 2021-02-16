@@ -5,6 +5,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from datetime import datetime as dt
 from selenium.common.exceptions import NoSuchElementException
+import smtplib, ssl
 
 
 def main():
@@ -19,42 +20,50 @@ def main():
         # check if registration is for a weekend
         if week_no < 3 or week_no > 4:
             # if run occurs at 5pm
-            if dt.now().hour == 17:
-                print("Program starting: " + str(dt.now()))
+            if dt.now().hour != 17:
                 first_timeslot.create_from_time("5:00pm-5:30pm")
                 second_timeslot.create_from_time("5:30pm-6:00pm")
-                print("Using 5-6 timeframe.")
                 # set time list
                 input_events = [first_timeslot, second_timeslot]
-                # do_stuff(input_events)
-                print("Program complete: " + str(dt.now()))
-            else:
-                print("Not running right now: " + str(dt.now()))
+                do_stuff(input_events)
+
         else:
             # if run occurs at 11pm
             if dt.now().hour == 11:
-                print("Program starting: " + str(dt.now()))
                 first_timeslot.create_from_time("11:00am-11:30am")
                 second_timeslot.create_from_time("11:30am-12:00pm")
-                print("Using 11-12 timeframe.")
                 # set time list
                 input_events = [first_timeslot, second_timeslot]
-                # do_stuff(input_events)
-                print("Program complete: " + str(dt.now()))
-            else:
-                print("Not running right now: " + str(dt.now()))
-    else:
-        print("Not running right now: " + str(dt.now()))
+                do_stuff(input_events)
+
+
+def send_email(message):
+    port = 465  # For SSL
+    # Email credentials here
+    
+    subject = "Error occured in Swimsignup"
+    message = "Subject: {}\n\n{}".format(subject, message)
+
+    # Create a secure SSL context
+    context = ssl.create_default_context()
+
+    with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
+        server.login(sender_email, password)
+        server.sendmail(sender_email, receiver_email, message)
 
 
 def do_stuff(input_events):
     person_list = []
     # add user login information here
-    file = open("/home/ubuntu/apps/login.csv", "r")
+    # for use on the server
+    # file = open("/home/ubuntu/apps/login.csv", "r")
+
+    # local development
+    file = open("login.csv", "r")
     for login in file:
         person_list.append(login.split(","))
     file.close()
-   
+
     event_list = []
     event_list = get_future_events()
 
@@ -63,12 +72,18 @@ def do_stuff(input_events):
     for input_event in input_events:
         desired_event_list.append(find_one_event_from_inputs(event_list, input_event))
 
+    error_message = []
+
     if desired_event_list[0] is not None and desired_event_list[1] is not None:
         print("Slots found. Commencing registration.")
         for person in person_list:
-            reservations(person[0], person[1], desired_event_list)
+            error_message.append(reservations(person[0], person[1], desired_event_list))
+        # check for errors
+        if error_message.length > 0:
+            send_email(str(error_message))
     else:
-        print("Slots could not be found")
+        print("Error: Slots could not be found")
+        send_email("Error: Slots could not be found")
 
 
 def login(driver, email, password):
@@ -81,7 +96,7 @@ def login(driver, email, password):
 
 def submit(driver):
     submit_element = driver.find_element_by_name("submit")
-    submit_element.click()
+    # submit_element.click()
 
 
 def reservations(email, password, desired_event_list):
@@ -94,6 +109,7 @@ def reservations(email, password, desired_event_list):
     )
     # run on windows
     # driver = webdriver.Chrome(options=chrome_options)
+    error_message = []
     is_logged_in = False
     for event in desired_event_list:
         time_stamp = (
@@ -119,8 +135,11 @@ def reservations(email, password, desired_event_list):
                 submit(driver)
                 print("Successfully registered: " + time_stamp)
         except NoSuchElementException:
-            print("Failed to register: " + time_stamp)
+            print("Error: Failed to register: " + time_stamp)
+            error_message.append("Failed to register: " + time_stamp)
+
     driver.close()
+    return error_message
 
 
 if __name__ == "__main__":
