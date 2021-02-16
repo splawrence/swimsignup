@@ -20,7 +20,7 @@ def main():
         # check if registration is for a weekend
         if week_no < 3 or week_no > 4:
             # if run occurs at 5pm
-            if dt.now().hour != 17:
+            if dt.now().hour == 17:
                 first_timeslot.create_from_time("5:00pm-5:30pm")
                 second_timeslot.create_from_time("5:30pm-6:00pm")
                 # set time list
