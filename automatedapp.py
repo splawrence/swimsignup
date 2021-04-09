@@ -7,23 +7,21 @@ from selenium.common.exceptions import NoSuchElementException
 import sys
 
 # sets the environmental variables
-# active_profile = "prod"
-active_profile = "dev"
+active_profile = "prod"
+# active_profile = "dev"
 
 # scheduleing details
 # even or odd run day option. by default this is 9
-# run_day = 9
-run_day = 10
+run_day = 9
+# run_day = 10
 
 # weekday run options
-# weekday_run_hour = 17
 weekday_run_hour = 17
 weekday_timeslot1 = "5:00pm-5:30pm"
 weekday_timeslot2 = "5:30pm-6:00pm"
 
 # weekend run options
-# weekend_run_hour = 11
-weekend_run_hour = 12
+weekend_run_hour = 11
 weekend_timeslot1 = "11:00am-11:30am"
 weekend_timeslot2 = "11:30am-12:00pm"
 
