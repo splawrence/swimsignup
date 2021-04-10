@@ -79,7 +79,7 @@ def do_stuff(input_events):
         file = open("/home/ubuntu/apps/login.csv", "r")
     else:
         # local development
-        file = open("login.csv", "r")
+        file = open("D:\Apps\git\login.csv", "r")
 
     for login in file:
         person_list.append(login.split(","))
@@ -127,7 +127,7 @@ def make_reservations(email, password, desired_event_list):
 
     is_logged_in = False
     for event in desired_event_list:
-        slot_info = (str(email) + str(" for ") + str(event.month) + " " + str(event.date) + " " + str(event.time))
+        slot_info = (str(email) + str(" for ") + " " + str(event.date) + " " + str(event.time))
         driver.get(event.sign_up_url)
         try:
             if is_logged_in is False:
