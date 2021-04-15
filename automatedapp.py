@@ -39,6 +39,8 @@ category_description = "Open Schedules (i.e., pool, gym, gymnastics)"
 studio_description = "Meter Pool"
 open_slots_number = "1"
 event_title = "Lap/Fitness Lane Reservation"
+log_list = []
+log_list.append("success")
 
 def main():
     # scheduling logic
@@ -59,6 +61,7 @@ def main():
             # if run occurs at 11am
             if datetime.now().hour == weekend_run_hour:
                 setup_slots(weekend_timeslot1, weekend_timeslot2)
+                    
 
 def setup_slots(time_slot1, time_slot2):
         first_event = event()
@@ -70,7 +73,10 @@ def setup_slots(time_slot1, time_slot2):
         # set time list
         input_events = [first_event, second_event]
         do_stuff(input_events)
-
+        if log_list[0] == "error":
+            for l in log_list:
+                print(str(l))
+    
 def do_stuff(input_events):
     person_list = []
     # add user login information here
@@ -88,11 +94,11 @@ def do_stuff(input_events):
     event_list = find_events(input_events)
 
     if len(event_list) > 0:
-        print("Slots found. Commencing registration.")
         for person in person_list:
             make_reservations(person[0], person[1], event_list)
     else:
-        print("Error: Slots could not be found")
+        log_list.append(str(datetime.now()) + " Error: Slots could not be found")
+        log_list[0] = "error"
         sys.exit(404)
 
 def login(driver, email, password):
@@ -109,9 +115,8 @@ def submit(driver):
 def check_for_waitlisted(driver, time_stamp):
         # check that there is an availible slot
         if(driver.find_element_by_name("action").get_attribute("value") == "waitlist"):
-            print("Waitlisted: " + time_stamp)
-        else:
-            print("Successfully registered: " + time_stamp)
+            log_list.append(str(datetime.now()) + ": Waitlisted: " + str(time_stamp))
+            log_list[0] = "error"
 
 def make_reservations(email, password, desired_event_list):
     chrome_options = Options()
@@ -127,7 +132,7 @@ def make_reservations(email, password, desired_event_list):
 
     is_logged_in = False
     for event in desired_event_list:
-        slot_info = (str(email) + str(" for ") + " " + str(event.date) + " " + str(event.time))
+        slot_info = (str(email) + str(" for ") + str(datetime.now().month) + "/" + str(event.date) + "/" + str(datetime.now().year) + " " + str(event.time))
         driver.get(event.sign_up_url)
         try:
             if is_logged_in is False:
@@ -147,7 +152,8 @@ def make_reservations(email, password, desired_event_list):
                 # reserve slot
                 submit(driver)
         except NoSuchElementException:
-            print("Error: Failed to register: " + slot_info)
+            log_list.append(str(datetime.now()) + ": Failed to register: " + str(slot_info))
+            log_list[0] = "error"
 
     driver.close()
 
@@ -167,32 +173,27 @@ def find_events(input_events):
     response = requests.get(url)
     desired_event_list = []
 
+    log_list.append(str(datetime.now()) + ": Response: " + str(response.status_code))
     if response.status_code == 200:
-        print("Response received from https://groupexpro.com: " + str(response.status_code) + " OK")
         # get json from response
         event_str_list = response_mapper(response.text)
 
         # loop through each event string and create and event from each
         event_list = create_event_from_string(event_str_list)
 
-        print("There are: " + str(len(event_list)) + " events to pick from.")
-        print("User event date: " + str(input_events[0].date))
-        print("Returned event date: " + str(event_list[0].date))
-
         for user_event in input_events:
             event_found = find_one_event_from_inputs(event_list, user_event)
             if event_found is not None:
                 desired_event_list.append(event_found)
-        print("-----------------------------------")
     else:
-        print("Response code: " + str(response.status_code))
-    
+        log_list[0] = "error"
+
     return desired_event_list
 
 def response_mapper(response_text):
     # format for valid json
     response_text = response_text.lstrip("( ").rstrip(" )").replace("&nbsp;", "")
-    json_obj = json.loads(response_text) 
+    json_obj = json.loads(response_text)
 
     # create a list using pipes as delimiter
     return list(json_obj["aaData"])
@@ -213,11 +214,10 @@ def find_one_event_from_inputs(availible_event_list, user_event):
             and event.category == user_event.category
             and event.studio == user_event.studio
         ):
-            print("-----------------------------------")
-            print("Time, title, catagory, studio found")
+            log_list.append(str(datetime.now()) + ": Event found")
             if event.date == user_event.date:
-                print("Date found")
-                print("Slots availible: " + str(event.open_slots))
+                log_list.append(str(datetime.now()) + ": Date found")
+                log_list.append(str(datetime.now()) + ": Slots availible: " + str(event.open_slots))
                 if event.open_slots >= user_event.open_slots:
                     return event
 
